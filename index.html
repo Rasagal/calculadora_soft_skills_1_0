@@ -189,15 +189,15 @@
         }
 
         .chart-column {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+        display: grid;
+        grid-template-columns: 1fr 1fr; 
         gap: 30px;
         width: 100%;
         background: white;
         padding: 30px;
         border-radius: 20px;
         align-items: start;
-        }
+    }
 
         .total-score-display {
             font-size: 48px;
@@ -825,30 +825,27 @@
 
             /* 3. Gráfico y Resultados (Debajo de los sliders) */
             .chart-column {
-                order: 2;
-                flex-direction: column !important; /* Uno debajo de otro en móvil */
+                display: flex !important; /* Forzamos flex en lugar de grid para apilar */
+                flex-direction: column !important; 
                 padding: 15px !important;
                 margin-bottom: 30px;
                 gap: 20px;
                 align-items: center !important;
-                height: auto !important;
-                grid-template-columns: 1fr;
             }
 
             #radarChart {
-                max-width: 100% !important;
                 width: 100% !important;
+                max-width: 100% !important;
                 height: auto !important;
-                max-height: 350px !important;
-                margin: 0 auto !important;
+                max-height: 350px !important; /* Evita que crezca demasiado hacia abajo */
             }
 
             .results-card {
-                flex: none !important;
+                grid-column: auto !important; /* Reseteamos la posición del grid */
+                grid-row: auto !important;
                 width: 100% !important;
-                max-width: none !important;
-                min-height: auto !important; /* Que sea compacta */
-                margin-top: 20px !important;
+                padding: 25px !important; /* Un poco más compacto en móvil */
+                margin-top: 10px !important;
             }
 
             /* 4. Otros ajustes */
@@ -922,25 +919,15 @@
     </div>
     <section class="hero-section">
         <h1>Calculadora de <strong>Soft Skills</strong></h1>
-        <p>Evalúa tu posicionamiento en el sector profesional que elijas.</p>
+        <p>Analiza tus habilidades interpersonales y define tu ventaja competitiva en el mercado.</p>
     </section>
 
     <div class="content-padding">
-        <div class="sector-card">
-            <h3 style="margin-top:0">¿Sobre qué sector quieres evaluar tu marca personal?</h3>
-            <input type="text" id="sector-field" class="sector-input" placeholder="Ej: Consultoría IT">
-            <div class="tags-wrapper">
-                <button class="tag-btn" onclick="selectTag('Consultoría')">Consultoría</button>
-                <button class="tag-btn" onclick="selectTag('Ingeniería')">Ingeniería</button>
-                <button class="tag-btn" onclick="selectTag('Ventas')">Ventas</button>
-                <button class="tag-btn" onclick="selectTag('Derecho')">Derecho</button>
-            </div>
-        </div>
 
         <div class="evaluation-header">
             <h2 class="evaluation-title">Variables de evaluación</h2>
             <p class="evaluation-subtitle">
-                <strong>Puntúate del 0 al 10</strong> en cada variable según tu situación actual en ese sector<br>
+                <strong>Puntúate del 0 al 10</strong> en cada variable según tus habilidades<br>
                 <strong>Sé honesto:</strong> no puntúes lo que podrías tener, sino lo que ya has construido.
             </p>
         </div>
@@ -1038,7 +1025,7 @@
         <div class="cta-banner">
             <div class="cta-content">
                 <h2>Te regalamos un informe personal</h2>
-                <p>sobre tu marca personal</p>
+                <p>sobre tus habilidades y/o capacidades</p>
             </div>
             <div class="cta-actions">
                 <button class="btn-download">
@@ -1051,6 +1038,38 @@
 </div>
 
 <script>
+
+    const vars = [
+        // COMUNICACIÓN
+        { id: 'pub', name: 'Hablar en público', icon: '📢' },
+        { id: 'esc', name: 'Escucha activa', icon: '👂' },
+        { id: 'neg', name: 'Negociación', icon: '🤝' },
+        { id: 'res', name: 'Resolución de conflictos', icon: '⚖️' },
+        { id: 'len', name: 'Lenguaje no verbal', icon: '🎭' },
+        { id: 'ner', name: 'Gestión de nervios', icon: '🧘' },
+        { id: 'pen', name: 'Pensamiento crítico', icon: '🧠' },
+        // LIDERAZGO
+        { id: 'lid', name: 'Liderazgo', icon: '👑' },
+        { id: 'aut', name: 'Auto conocimiento', icon: '🔍' },
+        { id: 'opt', name: 'Optimismo', icon: '✨' },
+        { id: 'esf', name: 'Esfuerzo y superación', icon: '🏔️' },
+        { id: 'eti', name: 'Ética laboral', icon: '🛡️' },
+        { id: 'iem', name: 'Inteligencia emocional', icon: '❤️' },
+        { id: 'per', name: 'Personalidad amigable', icon: '😊' },
+        // EFICIENCIA
+        { id: 'ada', name: 'Adaptabilidad', icon: '🦎' },
+        { id: 'est', name: 'Gestión de estrés', icon: '🌪️' },
+        { id: 'tie', name: 'Gestión del tiempo', icon: '⏱️' },
+        { id: 'inn', name: 'Innovación', icon: '💡' },
+        { id: 'con', name: 'Concentración', icon: '🎯' },
+        { id: 'apr', name: 'Aprendizaje rápido', icon: '🚀' },
+        { id: 'pun', name: 'Puntualidad', icon: '📅' },
+        { id: 'pac', name: 'Paciencia', icon: '⏳' },
+        { id: 'org', name: 'Organización', icon: '📁' },
+        { id: 'det', name: 'Atención detalle', icon: '🔍' }
+    ];
+
+    const ids = vars.map(v => v.id);
 
     const INFO_TEXTS = {
     // COMUNICACIÓN
@@ -1127,47 +1146,131 @@
         allIds.forEach(id => sync(id, 0));
     };
 
-    // --- BASE DE DATOS AMPLIADA ---
     const REC_DATABASE = {
-        exp: {
-            bajo: { text: "Céntrate en proyectos pro-bono para ganar tracción rápida.", icon: "👤" },
-            medio: { text: "Documenta tus casos de éxito; haz que tu experiencia sea tangible.", icon: "📄" },
-            alto: { text: "Posiciónate como mentor; tu experiencia ahora debe validar a otros.", icon: "🏆" }
+        // GRUPO 1: COMUNICACIÓN
+        'pub': { 
+            bajo: { text: "Apúntate a un curso de oratoria; el miedo se quita con técnica y práctica.", icon: "📢" },
+            medio: { text: "Practica grabándote en video para pulir muletillas y gestos repetitivos.", icon: "📽️" },
+            alto: { text: "¡Lidera ponencias! Tu capacidad de comunicación es una gran ventaja competitiva.", icon: "🌟" }
         },
-        form: {
-            bajo: { text: "Identifica la certificación 'llave' de tu sector y ve a por ella.", icon: "🎓" },
-            medio: { text: "Deja de ser generalista; busca una especialización técnica diferenciadora.", icon: "🎯" },
-            alto: { text: "No busques más títulos; busca impartirlos. Es hora de enseñar.", icon: "🎤" }
+        'esc': { 
+            bajo: { text: "Evita interrumpir. Practica el silencio hasta que el otro termine de hablar.", icon: "👂" },
+            medio: { text: "Haz preguntas de seguimiento para demostrar que realmente estás presente.", icon: "💬" },
+            alto: { text: "Eres un gran oyente. Usa esta empatía para fortalecer tus alianzas estratégicas.", icon: "💎" }
         },
-        hab: {
-            bajo: { text: "Entrena tu comunicación asertiva; es la base para que el resto brille.", icon: "💡" },
-            medio: { text: "Mejora tu capacidad de delegación y liderazgo de equipos pequeños.", icon: "👥" },
-            alto: { text: "Perfecciona tu Storytelling ejecutivo para influir en la alta dirección.", icon: "🎭" }
+        'neg': { 
+            bajo: { text: "Lee sobre el método Harvard; busca siempre el beneficio mutuo (Win-Win).", icon: "🤝" },
+            medio: { text: "Trabaja en tu preparación previa con datos sólidos antes de negociar.", icon: "📊" },
+            alto: { text: "Maestro de acuerdos. Podrías mentorizar a otros en resolución de tratos.", icon: "🏆" }
         },
-        eje: {
-            bajo: { text: "Empieza a publicar 'Work in Progress'. Muestra que haces cosas.", icon: "🚀" },
-            medio: { text: "Muestra métricas reales de tus proyectos; los datos convencen.", icon: "📊" },
-            alto: { text: "Crea una metodología propia y compártela como 'tu sistema'.", icon: "⚙️" }
+        'res': { 
+            bajo: { text: "No evites el conflicto por miedo; gestiónalo de forma asertiva y temprana.", icon: "⚖️" },
+            medio: { text: "Mantén la neutralidad y busca soluciones creativas que satisfagan a las partes.", icon: "🧩" },
+            alto: { text: "Eres un pacificador nato. Tu presencia calma la tensión en los equipos.", icon: "⚓" }
         },
-        net: {
-            bajo: { text: "Asiste a 2 eventos de tu nicho al mes. Calidad sobre cantidad.", icon: "🤝" },
-            medio: { text: "Sé un 'conector': presenta a personas de tu red entre sí.", icon: "🔗" },
-            alto: { text: "Crea tu propio círculo de confianza (Mastermind) de alto nivel.", icon: "👑" }
+        'len': { 
+            bajo: { text: "Cuida tu postura y contacto visual; proyectas inseguridad sin darte cuenta.", icon: "🎭" },
+            medio: { text: "Alinea tus gestos con tus palabras para generar una confianza total.", icon: "📸" },
+            alto: { text: "Tu lenguaje corporal transmite autoridad y cercanía de forma natural.", icon: "✨" }
         },
-        cir: {
-            bajo: { text: "Evalúa qué recursos te faltan y busca aliados estratégicos.", icon: "⚖️" },
-            medio: { text: "Aprovecha tu estabilidad para tomar riesgos controlados.", icon: "🛡️" },
-            alto: { text: "Eres un referente; usa tu posición para abrir puertas a otros.", icon: "🏛️" }
+        'ner': { 
+            bajo: { text: "Aprende técnicas de respiración diafragmática para momentos de alta presión.", icon: "🧘" },
+            medio: { text: "Convierte los nervios en energía positiva; el cuerpo siente lo mismo.", icon: "⚡" },
+            alto: { text: "Dominio emocional total. Transmites una seguridad que inspira al resto.", icon: "🏔️" }
         },
-        mer: {
-            bajo: { text: "Investiga qué skills pide el mercado hoy y pivots rápido.", icon: "📈" },
-            medio: { text: "Anticípate a las tendencias de los próximos 2 años.", icon: "🔍" },
-            alto: { text: "Tú creas tendencia; define hacia dónde va tu industria.", icon: "🌊" }
+        'pen': { 
+            bajo: { text: "No aceptes todo a la primera. Pregúntate siempre el 'por qué' de las cosas.", icon: "🧠" },
+            medio: { text: "Busca activamente opiniones contrarias a la tuya para ampliar tu visión.", icon: "🔍" },
+            alto: { text: "Visión analítica brillante. Detectas sesgos y oportunidades con facilidad.", icon: "🎓" }
         },
-        hue: {
-            bajo: { text: "Optimiza tu foto y titular de LinkedIn hoy mismo.", icon: "🌐" },
-            medio: { text: "Publica contenido propio semanalmente. Deja de ser espectador.", icon: "✍️" },
-            alto: { text: "Crea tu propia plataforma: Newsletter o Podcast personal.", icon: "🎙️" }
+
+        // GRUPO 2: LIDERAZGO
+        'lid': { 
+            bajo: { text: "El liderazgo empieza por uno mismo. Toma pequeñas iniciativas cada día.", icon: "👑" },
+            medio: { text: "Aprende a delegar tareas operativas para enfocarte en la visión estratégica.", icon: "👥" },
+            alto: { text: "Líder inspirador. Tu capacidad de guía moviliza equipos hacia el éxito.", icon: "🚀" }
+        },
+        'aut': { 
+            bajo: { text: "Realiza un análisis DAFO personal para conocer tus límites y virtudes.", icon: "🔍" },
+            medio: { text: "Pide feedback honesto a tus compañeros para reducir tus puntos ciegos.", icon: "📝" },
+            alto: { text: "Gran madurez. Conoces tus resortes emocionales y sabes cómo gestionarlos.", icon: "🌅" }
+        },
+        'opt': { 
+            bajo: { text: "Entrena el agradecimiento diario para cambiar el foco hacia las soluciones.", icon: "🌈" },
+            medio: { text: "Rodéate de personas proactivas; la actitud positiva se contagia.", icon: "☀️" },
+            alto: { text: "Tu energía es un motor para el equipo. Mantén ese enfoque resiliente.", icon: "🔋" }
+        },
+        'esf': { 
+            bajo: { text: "La disciplina vence al talento. Márcate objetivos pequeños y no falles.", icon: "🧗" },
+            medio: { text: "No te conformes con el aprobado. Busca siempre el estándar de excelencia.", icon: "🔥" },
+            alto: { text: "Capacidad de superación admirable. Tu persistencia es tu mayor activo.", icon: "🎖️" }
+        },
+        'eti': { 
+            bajo: { text: "La integridad es innegociable. Actúa siempre como si todos te miraran.", icon: "🛡️" },
+            medio: { text: "Sé coherente entre tus palabras y tus acciones en el día a día profesional.", icon: "🤝" },
+            alto: { text: "Eres un referente de confianza. Tu ética sólida es la base de tu marca.", icon: "💎" }
+        },
+        'iem': { 
+            bajo: { text: "Identifica tus emociones en tiempo real antes de reaccionar impulsivamente.", icon: "❤️" },
+            medio: { text: "Practica la empatía cognitiva: intenta pensar desde la lógica del otro.", icon: "🤝" },
+            alto: { text: "Conectas profundamente. Dominas el arte de gestionar grupos humanos.", icon: "🌊" }
+        },
+        'per': { 
+            bajo: { text: "Usa el nombre de las personas y sonríe más; rompe el hielo con cercanía.", icon: "😊" },
+            medio: { text: "Mejora tus habilidades sociales en entornos informales (networking).", icon: "👋" },
+            alto: { text: "Carisma natural. Generas agrado y confianza en cualquier entorno.", icon: "⭐" }
+        },
+
+        // GRUPO 3: EFICIENCIA
+        'ada': { 
+            bajo: { text: "Sal de tu zona de confort probando herramientas o métodos nuevos cada semana.", icon: "🦎" },
+            medio: { text: "Mantén una mentalidad flexible ante los cambios de prioridades del mercado.", icon: "🔄" },
+            alto: { text: "Capacidad de pivotar asombrosa. Te anticipas a los cambios del sector.", icon: "🌊" }
+        },
+        'est': { 
+            bajo: { text: "Organiza tu espacio de trabajo; el caos externo aumenta el estrés interno.", icon: "🌪️" },
+            medio: { text: "Aprende a decir 'no' y a poner límites claros a tu carga de trabajo.", icon: "🛑" },
+            alto: { text: "Inmutable bajo presión. Tomas decisiones lúcidas en los momentos críticos.", icon: "🧘" }
+        },
+        'tie': { 
+            bajo: { text: "Usa la técnica Pomodoro o listas de prioridad para evitar la dispersión.", icon: "⏱️" },
+            medio: { text: "Elimina los 'ladrones de tiempo' (redes sociales, reuniones sin agenda).", icon: "📱" },
+            alto: { text: "Máxima eficiencia operativa. Sacas el mayor provecho a cada jornada.", icon: "🎯" }
+        },
+        'inn': { 
+            bajo: { text: "Pierde el miedo a proponer ideas diferentes, aunque parezcan arriesgadas.", icon: "💡" },
+            medio: { text: "Dedica tiempo semanal a investigar tendencias fuera de tu sector.", icon: "🛠️" },
+            alto: { text: "Mente disruptiva. Constantemente mejoras procesos con soluciones únicas.", icon: "🚀" }
+        },
+        'con': { 
+            bajo: { text: "Practica el 'Deep Work': sesiones de 45 min sin móvil ni notificaciones.", icon: "🎯" },
+            medio: { text: "Entrena tu atención mediante meditación o lectura profunda diaria.", icon: "🧠" },
+            alto: { text: "Foco total. Tu capacidad de abstracción te hace muy productivo.", icon: "🔭" }
+        },
+        'apr': { 
+            bajo: { text: "Aprende a aprender. Busca cursos cortos y aplica lo aprendido hoy mismo.", icon: "📚" },
+            medio: { text: "Enseña lo que sabes a otros; es la mejor forma de consolidar tu saber.", icon: "🎓" },
+            alto: { text: "Esponja de conocimiento. Evolucionas a una velocidad impresionante.", icon: "⚡" }
+        },
+        'pun': { 
+            bajo: { text: "Llegar puntual es llegar 5 minutos antes. Reajusta tus alarmas.", icon: "📅" },
+            medio: { text: "Prevé siempre un margen de tiempo para imprevistos en tus citas.", icon: "🚗" },
+            alto: { text: "Tu puntualidad demuestra un respeto máximo por el tiempo de los demás.", icon: "⌚" }
+        },
+        'pac': { 
+            bajo: { text: "Acepta que los grandes proyectos requieren tiempo y procesos lentos.", icon: "⏳" },
+            medio: { text: "Cuando sientas frustración, respira y enfócate en la tarea actual.", icon: "🚶" },
+            alto: { text: "Sabes esperar el momento justo. La paciencia es tu ventaja estratégica.", icon: "🌳" }
+        },
+        'org': { 
+            bajo: { text: "Empieza a usar un gestor de tareas (Notion, Trello o papel). No fíes todo a la memoria.", icon: "📁" },
+            medio: { text: "Crea protocolos para tus tareas repetitivas y gana orden mental.", icon: "🧹" },
+            alto: { text: "Sistemas de trabajo impecables. Eres el arquitecto del orden.", icon: "🏗️" }
+        },
+        'det': { 
+            bajo: { text: "Revisa siempre dos veces antes de enviar; los detalles marcan la calidad.", icon: "🔍" },
+            medio: { text: "Utiliza plantillas y estándares para asegurar un acabado profesional.", icon: "📏" },
+            alto: { text: "Ojo clínico. Tu nivel de pulcritud garantiza la excelencia en todo.", icon: "💎" }
         }
     };
 
@@ -1242,7 +1345,8 @@
         const rangeInput = document.getElementById(id + '-range');
         rangeInput.style.background = `linear-gradient(to right, ${color} ${percentage}%, #e2e8f0 ${percentage}%)`;
         rangeInput.style.setProperty('--thumb-color', color);
-
+        
+        updateStrengthsAndWeaknesses();
         updateTotal();
     }
 
@@ -1250,86 +1354,119 @@
         const fuertesCont = document.getElementById('fuertes-list');
         const debilesCont = document.getElementById('debiles-list');
         
-        const data = ids.map(id => ({
-            name: vars.find(v => v.id === id).name,
-            icon: vars.find(v => v.id === id).icon,
-            val: parseInt(document.getElementById(id + '-num').value) || 0
-        }));
+        // Obtenemos los datos de las 24 variables
+        const data = ids.map(id => {
+            const variable = vars.find(v => v.id === id);
+            return {
+                name: variable.name,
+                icon: variable.icon,
+                val: parseInt(document.getElementById(id + '-num').value) || 0
+            };
+        });
 
-        const fuertes = data.filter(d => d.val >= 7).sort((a,b) => b.val - a.val);
-        const debiles = data.filter(d => d.val <= 4).sort((a,b) => a.val - b.val);
+        // Filtramos y ordenamos
+        // Tomamos las 4 mejores (mínimo 7 puntos)
+        const fuertes = data
+            .filter(d => d.val >= 7)
+            .sort((a, b) => b.val - a.val)
+            .slice(0, 4); 
+
+        // Tomamos las 4 que más necesitan mejora (máximo 4 puntos)
+        const debiles = data
+            .filter(d => d.val <= 4)
+            .sort((a, b) => a.val - b.val)
+            .slice(0, 4);
 
         const renderItem = (item) => `
-            <div class="item-result" style="border: 1px solid #edf2f7; margin-bottom: 8px;">
-                <div style="font-size: 18px; background: #ffffff; padding: 6px; border-radius: 6px; border: 1px solid #f1f5f9;">${item.icon}</div>
-                <div class="item-info">
-                    <span style="font-size: 13px;">${item.name}</span>
-                    <small style="font-size: 11px;">${item.val >= 7 ? 'Área de poder' : 'Mejora urgente'}</small>
+            <div class="item-result" style="border: 1px solid #edf2f7; margin-bottom: 8px; display: flex; align-items: center; padding: 10px; border-radius: 10px; background: white;">
+                <div style="font-size: 20px; background: #f8fafc; padding: 8px; border-radius: 8px; border: 1px solid #f1f5f9; margin-right: 12px; min-width: 45px; text-align: center;">${item.icon}</div>
+                <div class="item-info" style="flex-grow: 1;">
+                    <div style="font-size: 13px; font-weight: 600; color: #1a2b4a;">${item.name}</div>
+                    <div style="font-size: 11px; color: ${item.val >= 7 ? '#22c55e' : '#64748b'}; text-transform: uppercase; letter-spacing: 0.5px;">${item.val >= 7 ? 'Área de poder' : 'Mejora prioritaria'}</div>
                 </div>
-                <span style="color: ${item.val >= 7 ? '#22c55e' : '#ef4444'}; font-weight: 800; font-size: 15px;">${item.val}</span>
+                <div style="color: ${item.val >= 7 ? '#22c55e' : '#ef4444'}; font-weight: 800; font-size: 18px; margin-left: 10px;">${item.val}</div>
             </div>
         `;
 
         fuertesCont.innerHTML = fuertes.length ? fuertes.map(renderItem).join('') 
-            : '<p style="color:#64748b; font-size:12px; font-style: italic;">Sigue trabajando para destacar en áreas clave.</p>';
+            : '<p style="color:#64748b; font-size:12px; font-style: italic; text-align:center; padding: 20px;">Sigue trabajando para destacar en tus Soft Skills.</p>';
         
         debilesCont.innerHTML = debiles.length ? debiles.map(renderItem).join('') 
-            : '<p style="color:#64748b; font-size:12px; font-style: italic;">¡Excelente equilibrio! Sin áreas críticas.</p>';
+            : '<p style="color:#64748b; font-size:12px; font-style: italic; text-align:center; padding: 20px;">¡Gran equilibrio! No tienes áreas críticas actualmente.</p>';
     }
 
     function updateTotal() {
-    if (charts.length < 3) return;
+        if (charts.length < 3) return;
 
-    // Actualizar datos de las 3 gráficas
-    charts[0].data.datasets[0].data = coleccion1.map(id => parseInt(document.getElementById(id + '-num').value) || 0);
-    charts[1].data.datasets[0].data = coleccion2.map(id => parseInt(document.getElementById(id + '-num').value) || 0);
-    charts[2].data.datasets[0].data = coleccion3.map(id => parseInt(document.getElementById(id + '-num').value) || 0);
-    
-    charts.forEach(c => c.update('none'));
+        // Actualizar datos de las 3 gráficas
+        charts[0].data.datasets[0].data = coleccion1.map(id => parseInt(document.getElementById(id + '-num').value) || 0);
+        charts[1].data.datasets[0].data = coleccion2.map(id => parseInt(document.getElementById(id + '-num').value) || 0);
+        charts[2].data.datasets[0].data = coleccion3.map(id => parseInt(document.getElementById(id + '-num').value) || 0);
+        
+        charts.forEach(c => c.update('none'));
 
-    // Cálculo del Score Global basado en 24 variables (máximo 240 puntos)
-    const totalSuma = allIds.reduce((acc, id) => {
-        return acc + (parseInt(document.getElementById(id + '-num').value) || 0);
-    }, 0);
+        // Cálculo del Score Global basado en 24 variables (máximo 240 puntos)
+        const totalSuma = allIds.reduce((acc, id) => {
+            return acc + (parseInt(document.getElementById(id + '-num').value) || 0);
+        }, 0);
 
-    const score10 = (totalSuma / 240) * 10;
-    const puntosExactos = (totalSuma / 240) * 8000;
+        const score10 = (totalSuma / 240) * 10;
+        const puntosExactos = (totalSuma / 240) * 8000;
 
-    // Actualizar UI
-    document.getElementById('final-score').innerText = score10.toFixed(1);
-    const puntosElement = document.getElementById('puntos-exactos');
-    if(puntosElement) puntosElement.innerText = Math.round(puntosExactos).toLocaleString();
+        // Actualizar UI
+        document.getElementById('final-score').innerText = score10.toFixed(1);
+        const puntosElement = document.getElementById('puntos-exactos');
+        if(puntosElement) puntosElement.innerText = Math.round(puntosExactos).toLocaleString();
 
-    // Actualizar barra de progreso y etiqueta
-    const marker = document.getElementById('score-marker');
-    if(marker) marker.style.left = (score10 * 10) + '%';
-    
-    const markerNote = document.getElementById('marker-note');
-    if(markerNote) markerNote.innerText = score10.toFixed(1);
+        // Actualizar barra de progreso y etiqueta
+        const marker = document.getElementById('score-marker');
+        if(marker) marker.style.left = (score10 * 10) + '%';
+        
+        const markerNote = document.getElementById('marker-note');
+        if(markerNote) markerNote.innerText = score10.toFixed(1);
 
-    updateScoreLabel(score10);
-}
+        updateScoreLabel(score10);
+        updateRecommendations();
+    }
 
     function updateRecommendations() {
         const container = document.getElementById('recommendations-container');
-        
+        if (!container) return;
+
         const allRecs = ids.map(id => {
             const val = parseInt(document.getElementById(id + '-num').value) || 0;
+            const variableInfo = vars.find(v => v.id === id); // Buscamos el nombre e icono real
+            
             let nivel = 'bajo';
             if (val > 4 && val <= 7) nivel = 'medio';
             if (val > 7) nivel = 'alto';
             
-            return { id, val, ...REC_DATABASE[id][nivel] };
+            // Obtenemos el texto y el icono de la base de datos que pegamos antes
+            const recData = REC_DATABASE[id][nivel];
+            
+            return { 
+                id, 
+                val, 
+                name: variableInfo.name, 
+                text: recData.text, 
+                icon: recData.icon 
+            };
         });
 
+        // Ordenamos de menor a mayor puntuación para dar prioridad a lo que hay que mejorar
         allRecs.sort((a, b) => a.val - b.val);
 
+        // Renderizamos las 4 recomendaciones más urgentes
         container.innerHTML = allRecs.slice(0, 4).map(rec => `
-            <div class="rec-card">
-                <div class="rec-icon">${rec.icon}</div>
+            <div class="rec-card" style="display: flex; align-items: flex-start; background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 4px solid #4472c4; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <div class="rec-icon" style="font-size: 24px; margin-right: 15px;">${rec.icon}</div>
                 <div class="rec-text">
-                    <strong style="display:block; font-size:11px; color:#4472c4; text-transform:uppercase;">${rec.id === 'exp' ? 'Experiencia' : rec.id === 'form' ? 'Formación' : rec.id === 'hab' ? 'Habilidades' : rec.id === 'eje' ? 'Ejecución' : rec.id === 'net' ? 'Networking' : rec.id === 'cir' ? 'Contexto' : rec.id === 'mer' ? 'Mercado' : 'Huella Digital'}</strong>
-                    ${rec.text}
+                    <strong style="display:block; font-size:11px; color:#4472c4; text-transform:uppercase; margin-bottom: 4px;">
+                        Tips para ${rec.name}
+                    </strong>
+                    <p style="margin:0; font-size:13px; color:#475569; line-height:1.4;">
+                        ${rec.text}
+                    </p>
                 </div>
             </div>
         `).join('');
